@@ -1,5 +1,6 @@
 package com.fdvmlab.foodbyfoodiesforfoodies.views;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.util.Patterns;
@@ -11,6 +12,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.fdvmlab.foodbyfoodiesforfoodies.MainActivity;
 import com.fdvmlab.foodbyfoodiesforfoodies.R;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -18,6 +20,7 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 public class Login extends AppCompatActivity {
 
@@ -27,6 +30,7 @@ public class Login extends AppCompatActivity {
     protected TextView tvForgotPassword, tvDoNoHaveAnAccount;
     //Firebase
     private FirebaseAuth mAuth = null;
+    private FirebaseUser mUser = null;
     // Click Listener
     private ClickListener clickListener = null;
 
@@ -69,7 +73,7 @@ public class Login extends AppCompatActivity {
      */
     private void signin(String email, String password) {
         //Log any current user out
-        mAuth.signOut();
+        //mAuth.signOut();
 
         //signin
         mAuth.signInWithEmailAndPassword(email, password)
@@ -81,6 +85,7 @@ public class Login extends AppCompatActivity {
                             @Override
                             public void onSuccess(AuthResult authResult) {
                                 Log.d("Login#SignIn#SUCCESS", authResult.getUser().getEmail() + " Logged In Successfully.");
+                                mUser = authResult.getUser();
                             }
                         }).addOnFailureListener(new OnFailureListener() {
                             @Override
@@ -101,7 +106,7 @@ public class Login extends AppCompatActivity {
         public void onClick(View v) {
 
             // this intent will get will get its data depending on which view was clicked
-//            Intent intent = null;
+            Intent intent = null;
 
             // get the clicked view and act accordingly
             switch (v.getId()) {
@@ -112,8 +117,16 @@ public class Login extends AppCompatActivity {
                 case R.id.btnActivityLoginSignIn:
                     Log.d("Login#ClickListener: ", "Sign In button clicked");
                     //validate inputs and sign in
-                    if (validateInputFields())
+                    if (validateInputFields()) {
+
                         signin(etEmailAddress.getText().toString(), etPassword.getText().toString());
+                        //TODO open main activity
+                        if (mUser != null) {
+                            intent = new Intent(getApplicationContext(), MainActivity.class);
+                            intent.putExtra("uuid", mUser.getUid());
+                        }
+                    }
+
                     break;
                 case R.id.tvActivityLoginDoNotHaveAnAccount:
                     Log.d("Login#ClickListener: ", " Do not have an account");
@@ -121,7 +134,8 @@ public class Login extends AppCompatActivity {
                 default:
             }
             // go to next activity
-            // startActivity(intent);
+            if (intent != null)
+                startActivity(intent);
         }
 
         /**
