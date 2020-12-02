@@ -55,7 +55,7 @@ public class Login extends AppCompatActivity {
 
     }
 
-
+ 
     /**
      * Implementation of click listener
      */
@@ -78,8 +78,10 @@ public class Login extends AppCompatActivity {
                     break;
                 case R.id.btnActivityLoginSignIn:
                     Log.d("Login#ClickListener: ", "Sign In button clicked");
-                    //if (validateInputFields()) signin();
-                    break;
+                    //validate inputs and sign in
+                    if (validateInputFields())
+                        //signin(etEmailAddress.getText().toString(), etPassword.getText().toString());
+                        break;
                 case R.id.tvActivityLoginDoNotHaveAnAccount:
                     Log.d("Login#ClickListener: ", " Do not have an account");
                     break;
@@ -98,7 +100,7 @@ public class Login extends AppCompatActivity {
             String errorMessage;
 
             // Email address format check
-            if (Patterns.EMAIL_ADDRESS.matcher(etEmailAddress.getText().toString().trim()).matches()) {
+            if (!Patterns.EMAIL_ADDRESS.matcher(etEmailAddress.getText().toString().trim()).matches()) {
                 errorMessage = "Invalid format";
                 if (etEmailAddress.getText().toString().trim().isEmpty()) {
                     errorMessage = "Required";
