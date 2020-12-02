@@ -8,9 +8,15 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.fdvmlab.foodbyfoodiesforfoodies.R;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 
 public class Login extends AppCompatActivity {
@@ -55,14 +61,41 @@ public class Login extends AppCompatActivity {
 
     }
 
- 
+    /**
+     * Sign In with with the provided email and password
+     *
+     * @param email
+     * @param password
+     */
+    private void signin(String email, String password) {
+        //Log any current user out
+        mAuth.signOut();
+
+        //signin
+        mAuth.signInWithEmailAndPassword(email, password)
+                .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        //
+                        task.addOnSuccessListener(new OnSuccessListener<AuthResult>() {
+                            @Override
+                            public void onSuccess(AuthResult authResult) {
+                                Log.d("Login#SignIn#SUCCESS", authResult.getUser().getEmail() + " Logged In Successfully.");
+                            }
+                        }).addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                Log.e("Login#SignIn#FAIL", e.getMessage() + "");
+                            }
+                        });
+                    }
+                });
+    }
+
     /**
      * Implementation of click listener
      */
     private class ClickListener implements View.OnClickListener {
-        public ClickListener() {
-
-        }
 
         @Override
         public void onClick(View v) {
@@ -80,8 +113,8 @@ public class Login extends AppCompatActivity {
                     Log.d("Login#ClickListener: ", "Sign In button clicked");
                     //validate inputs and sign in
                     if (validateInputFields())
-                        //signin(etEmailAddress.getText().toString(), etPassword.getText().toString());
-                        break;
+                        signin(etEmailAddress.getText().toString(), etPassword.getText().toString());
+                    break;
                 case R.id.tvActivityLoginDoNotHaveAnAccount:
                     Log.d("Login#ClickListener: ", " Do not have an account");
                     break;
