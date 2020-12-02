@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "270387914800",
+    "firebase_url": "https://fbfff-4b574.firebaseio.com",
+    "project_id": "fbfff-4b574",
+    "storage_bucket": "fbfff-4b574.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:270387914800:android:1ab16e7ba9a9c4613ee5f5",
+        "android_client_info": {
+          "package_name": "com.fdvmlab.foodbyfoodiesforfoodies"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "270387914800-9imgquhjq7fdpcs9hae22vks4rq2lf1u.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCmor-cmsPdtSw9r6uf5SRmaQwEcJOtHhQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "270387914800-9imgquhjq7fdpcs9hae22vks4rq2lf1u.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
