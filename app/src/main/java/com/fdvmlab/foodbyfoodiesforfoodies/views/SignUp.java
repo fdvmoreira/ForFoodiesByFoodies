@@ -9,6 +9,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -17,8 +18,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.fdvmlab.foodbyfoodiesforfoodies.R;
 import com.fdvmlab.foodbyfoodiesforfoodies.Util;
 import com.fdvmlab.foodbyfoodiesforfoodies.models.User;
-import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.AuthResult;
@@ -124,66 +126,85 @@ public class SignUp extends AppCompatActivity {
                 .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
-                        Log.d("Create Auth", task.isSuccessful() ? "Success" : "Failed");
+                        Log.d("AUTH", task.isSuccessful() ? "Success" : "Failed");
 
+                        //If the registration was successful continue to upload image
                         if (task.isSuccessful()) {
+
+                            // Get the newly created user ID
                             user.setUserId(task.getResult().getUser().getUid());
 
-                            //get image from iv
+                            // Get Image from image view convert it into bytes and save them into storage
                             Bitmap bitmapImage = ((BitmapDrawable) ivProfilePicture.getDrawable()).getBitmap();
-                            // convert to bytes
-                            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                            // move bitmap obj into baos
-                            bitmapImage.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+                            ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+                            bitmapImage.compress(Bitmap.CompressFormat.JPEG, 100, byteArrayOutputStream);
 
-                            // upload image
-                            mStorageProfilePicturesRef.child(user.getUserId()).putBytes(baos.toByteArray()).continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
+
+                            // Upload the profile photo
+                            mStorageProfilePicturesRef.child(user.getUserId()).putBytes(byteArrayOutputStream.toByteArray()).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
                                 @Override
-                                public Task<Uri> then(@NonNull Task<UploadTask.TaskSnapshot> task) throws Exception {
-                                    if (!task.isSuccessful()) {
-                                        try {
-                                            throw task.getException();
-                                        } catch (Exception e) {
-                                            e.printStackTrace();
-                                        }
-                                    }
-                                    // Continue with the task to get the download URL
-                                    return mStorageProfilePicturesRef.getDownloadUrl();
-                                }
-                            }).addOnCompleteListener(new OnCompleteListener<Uri>() {
-                                @Override
-                                public void onComplete(@NonNull Task<Uri> task) {
+                                public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
+                                    // upload complete
                                     if (task.isSuccessful()) {
 
-                                        // add the missing attributes to the user's object
-                                        user.setProfilePhotoUrl(mStorageProfilePicturesRef.getDownloadUrl().toString());
-                                        user.setPassword(user.getPassword());
-
-                                    } else {
-                                        //Upload has failed
-                                        // TODO: delete what has been created
+                                        //get the uploaded images' URL
                                         try {
-                                            task.getException().printStackTrace();
+                                            Task<Uri> downloadUrl = task.getResult().getStorage().getDownloadUrl();
+                                            if (downloadUrl.isSuccessful())
+                                                user.setProfilePhotoUrl(mStorageProfilePicturesRef.getDownloadUrl().getResult().toString());
+                                            Log.e("DownloadUrl", mStorageProfilePicturesRef.getDownloadUrl().getResult().toString());
+
                                         } catch (Exception e) {
-                                            e.printStackTrace();
+                                            Log.e("DownloadUrl", " Could NOT get download URL" + e.getMessage() + "");
                                         }
+
+                                        // Save User to database
+                                        mDatabaseUsersRef.child(user.getUserId()).setValue(user).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                            @Override
+                                            public void onComplete(@NonNull Task<Void> task) {
+                                                if (task.isSuccessful())
+                                                    Toast.makeText(getApplicationContext(), " User " + user.getUserId(), Toast.LENGTH_SHORT).show();
+                                            }
+
+                                        }).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                            @Override
+                                            public void onSuccess(Void aVoid) {
+                                                Log.d("DATABASE", "User was saved!");
+                                            }
+
+                                        }).addOnFailureListener(new OnFailureListener() {
+                                            @Override
+                                            public void onFailure(@NonNull Exception e) {
+                                                Log.e("DATABASE", e.getMessage() + "");
+                                            }
+                                        });
                                     }
-
-                                    // Log the outcome
-                                    Log.d("", "Upload" + ((task.isSuccessful()) ? "successful!" : " failed!"));
                                 }
-                            });
 
-                            //Save to database
-                            mDatabaseUsersRef.setValue(user).addOnCompleteListener(new OnCompleteListener<Void>() {
+                            }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                                 @Override
-                                public void onComplete(@NonNull Task<Void> task) {
-                                    Log.e("DATABASE", "User was " + ((task.isSuccessful()) ? "" : "NOT") + " saved!");
+                                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                                    // upload successful
+                                    Log.d("STORAGE", "Image upload was successful! ");
+                                    Toast.makeText(getApplicationContext(), "Profile picture uploaded successfully!", Toast.LENGTH_SHORT).show();
+                                }
 
-                                    // TODO: delete thing already created
+                            }).addOnFailureListener(new OnFailureListener() {
+                                @Override
+                                public void onFailure(@NonNull Exception e) {
+                                    // upload failure
+                                    Log.e("STORAGE", "Image upload has FAILED! " + e.getMessage());
+                                    Toast.makeText(getApplicationContext(), "Image upload has FAILED! ", Toast.LENGTH_SHORT).show();
                                 }
                             });
 
+
+                        } else {
+                            try {
+                                task.getException().printStackTrace();
+                            } catch (Exception e) {
+                                Log.e("UPLOAD: ", e.getMessage() + "");
+                            }
                         }
                     }
                 });
@@ -245,8 +266,8 @@ public class SignUp extends AppCompatActivity {
                     }
 
                     // call the function to create user
-                    createNewUser(new User(etFullName.getText().toString(), etEmailAddress.getText().toString(), etPassword.getText().toString()));
-
+//                    createNewUser(new User(etFullName.getText().toString(), etEmailAddress.getText().toString(), etPassword.getText().toString()));
+                    createNewUser(new User(etFullName.getText().toString(), etEmailAddress.getText().toString(), etPassword.getText().toString(), "testURL"));
 
                     break;
                 case R.id.tvActivitySignUpAlreadyHaveAnAccount:
