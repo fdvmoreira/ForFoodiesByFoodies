@@ -2,13 +2,18 @@ package com.fdvmlab.foodbyfoodiesforfoodies.views;
 
 import android.os.Bundle;
 import android.util.Log;
-import android.util.Patterns;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.fdvmlab.foodbyfoodiesforfoodies.R;
+import com.fdvmlab.foodbyfoodiesforfoodies.Util;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 
 public class ForgotPassword extends AppCompatActivity {
@@ -17,17 +22,22 @@ public class ForgotPassword extends AppCompatActivity {
 
     //views ref
     private EditText etEmailAddress;
+    private Button btnRecoverPassword;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_forgot_password);
 
+        //init auth
+        mAuth = FirebaseAuth.getInstance();
+
         // init views
         etEmailAddress = findViewById(R.id.etForgotPasswordEmailAddress);
 
         //add click listener to recover password button
-        findViewById(R.id.btnForgotPasswordRecoverPassword).setOnClickListener(new ClickListener());
+        btnRecoverPassword = findViewById(R.id.btnForgotPasswordRecoverPassword);
+        btnRecoverPassword.setOnClickListener(new ClickListener());
 
     }
 
@@ -40,23 +50,28 @@ public class ForgotPassword extends AppCompatActivity {
                     String emailAddress = etEmailAddress.getText().toString().trim();
 
                     // check if the entered input is valid
-                    if (!isEmailValid(emailAddress)) {
+                    if (!Util.isEmailValid(emailAddress)) {
                         Log.e("ForgotPass#ClkListener", emailAddress.isEmpty() ? "Email Required" : "Invalid Email");
                         break;
                     }
-                    //sendResetPasswordEmail();
+                    //send email
+                    sendResetPasswordEmail(emailAddress);
                 default:
             }
         }
 
         /**
-         * Validate email address
          *
-         * @param emailAddress
-         * @return true if is valid or false otherwise
          */
-        private boolean isEmailValid(String emailAddress) {
-            return Patterns.EMAIL_ADDRESS.matcher(emailAddress).matches();
+        private void sendResetPasswordEmail(String emailAddress) {
+            mAuth.sendPasswordResetEmail(emailAddress).addOnCompleteListener(new OnCompleteListener<Void>() {
+                @Override
+                public void onComplete(@NonNull Task<Void> task) {
+                    Log.d("RECOVERY", (task.isSuccessful()) ? "Recover SUCCESS" : " Recover FAIL");
+                    //Snackbar.make(btnRecoverPassword,(task.isSuccessful())?"Email Sent!":"Recovery Failed!",Snackbar.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), (task.isSuccessful()) ? "Email Sent!" : "Recovery Failed!", Toast.LENGTH_SHORT).show();
+                }
+            });
         }
     }
 }
