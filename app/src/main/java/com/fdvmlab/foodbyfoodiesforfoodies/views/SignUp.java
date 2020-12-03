@@ -147,6 +147,7 @@ public class SignUp extends AppCompatActivity {
                                 @Override
                                 public Task<Uri> then(@NonNull Task<UploadTask.TaskSnapshot> task) throws Exception {
                                     if (!task.isSuccessful()) {
+                                        //upload has failed
                                         try {
                                             throw task.getException();
                                         } catch (Exception e) {
@@ -178,6 +179,7 @@ public class SignUp extends AppCompatActivity {
                                         mDatabaseUsersRef.child(user.getUserId()).setValue(user).addOnCompleteListener(new OnCompleteListener<Void>() {
                                             @Override
                                             public void onComplete(@NonNull Task<Void> task) {
+                                                // save complete
                                                 if (task.isSuccessful())
                                                     Toast.makeText(getApplicationContext(), " User " + user.getUserId(), Toast.LENGTH_SHORT).show();
                                             }
@@ -185,14 +187,18 @@ public class SignUp extends AppCompatActivity {
                                         }).addOnSuccessListener(new OnSuccessListener<Void>() {
                                             @Override
                                             public void onSuccess(Void aVoid) {
+                                                // save success
                                                 Log.d("DATABASE", "User was saved!");
+                                                Toast.makeText(getApplicationContext(), "User saved successfully!", Toast.LENGTH_SHORT).show();
 
                                             }
 
                                         }).addOnFailureListener(new OnFailureListener() {
                                             @Override
                                             public void onFailure(@NonNull Exception e) {
+                                                // save failed
                                                 Log.e("DATABASE", e.getMessage() + "");
+                                                Toast.makeText(getApplicationContext(), "User was NOT saved!", Toast.LENGTH_SHORT).show();
                                             }
                                         });
                                     }
@@ -203,6 +209,8 @@ public class SignUp extends AppCompatActivity {
                                     // upload successful
                                     Log.d("STORAGE", "Image upload was successful! ");
                                     Toast.makeText(getApplicationContext(), "Profile picture uploaded successfully!", Toast.LENGTH_SHORT).show();
+                                    // Leave the activity
+                                    startActivity(new Intent(getApplicationContext(), Login.class));
                                 }
                             }).addOnFailureListener(new OnFailureListener() {
                                 @Override
@@ -214,10 +222,15 @@ public class SignUp extends AppCompatActivity {
                             });
 
                         } else {
-                            try {
-                                task.getException().printStackTrace();
-                            } catch (Exception e) {
-                                Log.e("UPLOAD: ", e.getMessage() + "");
+
+                            if (task.getException() != null) {
+                                try {
+                                    //New Auth was not created
+                                    Toast.makeText(getApplicationContext(), "" + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                                    task.getException().printStackTrace();
+                                } catch (Exception e) {
+                                    Log.e("UPLOAD: ", e.getMessage() + "");
+                                }
                             }
                         }
                     }
