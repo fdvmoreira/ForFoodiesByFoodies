@@ -111,8 +111,8 @@ public class Login extends AppCompatActivity {
             // get the clicked view and act accordingly
             switch (v.getId()) {
                 case R.id.tvActivityLoginForgotPassword:
-//                    intent = new Intent(getApplicationContext(),ResetPassword.class);
                     Log.d("Login#ClickListener: ", " Forgot password clicked");
+                    intent = new Intent(getApplicationContext(), ForgotPassword.class);
                     break;
                 case R.id.btnActivityLoginSignIn:
                     Log.d("Login#ClickListener: ", "Sign In button clicked");
@@ -126,10 +126,10 @@ public class Login extends AppCompatActivity {
                             intent.putExtra("uuid", mUser.getUid());
                         }
                     }
-
                     break;
                 case R.id.tvActivityLoginDoNotHaveAnAccount:
                     Log.d("Login#ClickListener: ", " Do not have an account");
+                    intent = new Intent(getApplicationContext(), SignUp.class);
                     break;
                 default:
             }
