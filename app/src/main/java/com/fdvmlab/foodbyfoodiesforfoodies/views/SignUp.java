@@ -18,6 +18,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.fdvmlab.foodbyfoodiesforfoodies.R;
 import com.fdvmlab.foodbyfoodiesforfoodies.Util;
 import com.fdvmlab.foodbyfoodiesforfoodies.models.User;
+import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -141,18 +142,33 @@ public class SignUp extends AppCompatActivity {
 
 
                             // Upload the profile photo
-                            mStorageProfilePicturesRef.child(user.getUserId()).putBytes(byteArrayOutputStream.toByteArray()).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
+                            final StorageReference photoRef = mStorageProfilePicturesRef.child(user.getUserId() + ".jpg");
+                            photoRef.putBytes(byteArrayOutputStream.toByteArray()).continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
                                 @Override
-                                public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
+                                public Task<Uri> then(@NonNull Task<UploadTask.TaskSnapshot> task) throws Exception {
+                                    if (!task.isSuccessful()) {
+                                        try {
+                                            throw task.getException();
+                                        } catch (Exception e) {
+                                            e.printStackTrace();
+                                        }
+                                        return null;
+                                    }
+                                    return photoRef.getDownloadUrl();
+                                }
+                            }).addOnCompleteListener(new OnCompleteListener<Uri>() {
+                                @Override
+                                public void onComplete(@NonNull Task<Uri> task) {
                                     // upload complete
                                     if (task.isSuccessful()) {
 
-                                        //get the uploaded images' URL
+                                        //get the uploaded image's URL
                                         try {
-                                            Task<Uri> downloadUrl = task.getResult().getStorage().getDownloadUrl();
-                                            if (downloadUrl.isSuccessful())
-                                                user.setProfilePhotoUrl(mStorageProfilePicturesRef.getDownloadUrl().getResult().toString());
-                                            Log.e("DownloadUrl", mStorageProfilePicturesRef.getDownloadUrl().getResult().toString());
+                                            Uri downloadUrl = task.getResult();
+                                            if (downloadUrl != null) {
+                                                user.setProfilePhotoUrl(downloadUrl.toString());
+                                                Log.d("DownloadUrl", downloadUrl.toString());
+                                            }
 
                                         } catch (Exception e) {
                                             Log.e("DownloadUrl", " Could NOT get download URL" + e.getMessage() + "");
@@ -170,6 +186,7 @@ public class SignUp extends AppCompatActivity {
                                             @Override
                                             public void onSuccess(Void aVoid) {
                                                 Log.d("DATABASE", "User was saved!");
+
                                             }
 
                                         }).addOnFailureListener(new OnFailureListener() {
@@ -180,15 +197,13 @@ public class SignUp extends AppCompatActivity {
                                         });
                                     }
                                 }
-
-                            }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                            }).addOnSuccessListener(new OnSuccessListener<Uri>() {
                                 @Override
-                                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                                public void onSuccess(Uri uri) {
                                     // upload successful
                                     Log.d("STORAGE", "Image upload was successful! ");
                                     Toast.makeText(getApplicationContext(), "Profile picture uploaded successfully!", Toast.LENGTH_SHORT).show();
                                 }
-
                             }).addOnFailureListener(new OnFailureListener() {
                                 @Override
                                 public void onFailure(@NonNull Exception e) {
@@ -197,7 +212,6 @@ public class SignUp extends AppCompatActivity {
                                     Toast.makeText(getApplicationContext(), "Image upload has FAILED! ", Toast.LENGTH_SHORT).show();
                                 }
                             });
-
 
                         } else {
                             try {
@@ -277,5 +291,7 @@ public class SignUp extends AppCompatActivity {
                 default:
             }
         }
+
+
     }
 }
