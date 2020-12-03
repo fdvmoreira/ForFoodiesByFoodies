@@ -1,23 +1,41 @@
 package com.fdvmlab.foodbyfoodiesforfoodies.views;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
+import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.fdvmlab.foodbyfoodiesforfoodies.R;
+import com.fdvmlab.foodbyfoodiesforfoodies.Util;
+import com.fdvmlab.foodbyfoodiesforfoodies.models.User;
+import com.google.android.gms.tasks.Continuation;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.android.material.snackbar.Snackbar;
+import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
+
+import java.io.ByteArrayOutputStream;
 
 public class SignUp extends AppCompatActivity {
 
+    final int REQUEST_CODE = 200;
+    private Bitmap bitmapProfilePicture;
     // Firebase Auth
     private FirebaseAuth mAuth;
     private FirebaseUser mUser;
@@ -50,30 +68,189 @@ public class SignUp extends AppCompatActivity {
 
         // init views
         ivProfilePicture = findViewById(R.id.ivActivitySigUpProfilePicture);
+        ivProfilePicture.setDrawingCacheEnabled(true);
+        ivProfilePicture.buildDrawingCache();
 
         etFullName = findViewById(R.id.etActivitySignUpFullName);
         etEmailAddress = findViewById(R.id.etActivitySignUpEmailAddress);
         etPassword = findViewById(R.id.etActivitySignUpNewPassword);
         etConfirmPassword = findViewById(R.id.etActivitySignUpConfirmPassword);
 
-        //add listeners to views
-        findViewById(R.id.btnActivitySignUpSignUp).setOnClickListener(new ClickListener());
+        //add focus listener
+        etConfirmPassword.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if (hasFocus) {
+                    if (etPassword.getText().toString().length() < 6) {
+                        etPassword.setError("Password must be longer than 6 characters");
+                    }
+                }
+            }
+        });
 
+        // add listeners to views
+        ivProfilePicture.setOnClickListener(new ClickListener());
+        findViewById(R.id.btnActivitySignUpSignUp).setOnClickListener(new ClickListener());
         findViewById(R.id.tvActivitySignUpAlreadyHaveAnAccount).setOnClickListener(new ClickListener());
 
 
     }
 
+    /**
+     * @param requestCode
+     * @param resultCode
+     * @param data
+     */
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == REQUEST_CODE) {
+            if (resultCode == RESULT_OK) {
+                if (data != null) {
+                    if (data.getData() != null) {
+                        ivProfilePicture.setImageURI(data.getData());
+                        Snackbar.make(ivProfilePicture, "Upload Successful", Snackbar.LENGTH_LONG).show();
+                    }
+                }
+            } else {
+                Snackbar.make(ivProfilePicture, "No Image Selected", Snackbar.LENGTH_LONG).show();
+            }
+        }
+    }
+
+    private void createNewUser(final User user) {
+        // Create new Auth
+        mAuth.createUserWithEmailAndPassword(user.getEmail(), user.getPassword())
+                .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        Log.d("Create Auth", task.isSuccessful() ? "Success" : "Failed");
+
+                        if (task.isSuccessful()) {
+                            user.setUserId(task.getResult().getUser().getUid());
+
+                            //get image from iv
+                            Bitmap bitmapImage = ((BitmapDrawable) ivProfilePicture.getDrawable()).getBitmap();
+                            // convert to bytes
+                            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                            // move bitmap obj into baos
+                            bitmapImage.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+
+                            // upload image
+                            mStorageProfilePicturesRef.child(user.getUserId()).putBytes(baos.toByteArray()).continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
+                                @Override
+                                public Task<Uri> then(@NonNull Task<UploadTask.TaskSnapshot> task) throws Exception {
+                                    if (!task.isSuccessful()) {
+                                        try {
+                                            throw task.getException();
+                                        } catch (Exception e) {
+                                            e.printStackTrace();
+                                        }
+                                    }
+                                    // Continue with the task to get the download URL
+                                    return mStorageProfilePicturesRef.getDownloadUrl();
+                                }
+                            }).addOnCompleteListener(new OnCompleteListener<Uri>() {
+                                @Override
+                                public void onComplete(@NonNull Task<Uri> task) {
+                                    if (task.isSuccessful()) {
+
+                                        // add the missing attributes to the user's object
+                                        user.setProfilePhotoUrl(mStorageProfilePicturesRef.getDownloadUrl().toString());
+                                        user.setPassword(user.getPassword());
+
+                                    } else {
+                                        //Upload has failed
+                                        // TODO: delete what has been created
+                                        try {
+                                            task.getException().printStackTrace();
+                                        } catch (Exception e) {
+                                            e.printStackTrace();
+                                        }
+                                    }
+
+                                    // Log the outcome
+                                    Log.d("", "Upload" + ((task.isSuccessful()) ? "successful!" : " failed!"));
+                                }
+                            });
+
+                            //Save to database
+                            mDatabaseUsersRef.setValue(user).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                @Override
+                                public void onComplete(@NonNull Task<Void> task) {
+                                    Log.e("DATABASE", "User was " + ((task.isSuccessful()) ? "" : "NOT") + " saved!");
+
+                                    // TODO: delete thing already created
+                                }
+                            });
+
+                        }
+                    }
+                });
+    }
+
+    /**
+     * Click Listener to handle clicks
+     */
     private class ClickListener implements View.OnClickListener {
+
+
         @Override
         public void onClick(View v) {
-
             switch (v.getId()) {
+                case R.id.ivActivitySigUpProfilePicture:
+
+                    //pick image from sdcard
+                    startActivityForResult(new Intent(Intent.ACTION_GET_CONTENT).setType("image/*"), REQUEST_CODE);
+                    break;
                 case R.id.btnActivitySignUpSignUp:
-                    //TODO: validate inputs -> create new user -> add user to database
-                    //todo: validate - profile photo, name,email, and password match
+                    //TODO: 1 validate inputs -> 2 create new user -> 3 save profile photo -> 4 add user to database
+                    boolean isFormValid = true;
+
+                    //Log.e("CLICK","Creating ...");
+
+                    //check name
+                    if (Util.isTextInvalid(etFullName.getText().toString().trim())) {
+                        etFullName.setError("Invalid Name");
+                        isFormValid = false;
+                        break;
+                    }
+
+                    //check email address
+                    if (!Util.isEmailValid(etEmailAddress.getText().toString())) {
+                        etEmailAddress.setError("Email Is Invalid");
+                        isFormValid = false;
+                        break;
+                    }
+
+                    //check password
+                    if (!Util.isPasswordValid(etPassword.getText().toString())) {
+                        etPassword.setError("Password is too short (minimum 6 character");
+                        isFormValid = false;
+                        break;
+                    }
+
+                    //confirm password
+                    if (!Util.isPasswordValid(etConfirmPassword.getText().toString())) {
+                        etConfirmPassword.setError("Too short (minimum 6 characters)");
+                        isFormValid = false;
+                        break;
+                    }
+
+                    // check password match
+                    if (!etPassword.getText().toString().equals(etConfirmPassword.getText().toString())) {
+                        etConfirmPassword.setError("Passwords do NOT match");
+                        isFormValid = false;
+                        break;
+                    }
+
+                    // call the function to create user
+                    createNewUser(new User(etFullName.getText().toString(), etEmailAddress.getText().toString(), etPassword.getText().toString()));
+
+
                     break;
                 case R.id.tvActivitySignUpAlreadyHaveAnAccount:
+
                     startActivity(new Intent(getApplicationContext(), Login.class));
                     break;
                 default:
