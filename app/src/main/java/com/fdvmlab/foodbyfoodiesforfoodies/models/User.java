@@ -2,6 +2,7 @@ package com.fdvmlab.foodbyfoodiesforfoodies.models;
 
 public class User {
     private String userId, name, email, password, profilePhotoUrl;
+    private UserRole role;
 
     public User(String name, String email, String password, String profilePhotoUrl) {
         this.name = name;
@@ -11,6 +12,22 @@ public class User {
     }
 
     public User() {
+    }
+
+    public User(String name, String email, String password, UserRole role) {
+        this.name = name;
+        this.email = email;
+        this.password = password;
+        this.role = role;
+    }
+
+    public User(String userId, String name, String email, String password, String profilePhotoUrl, UserRole role) {
+        this.userId = userId;
+        this.name = name;
+        this.email = email;
+        this.password = password;
+        this.profilePhotoUrl = profilePhotoUrl;
+        this.role = role;
     }
 
     public User(String userId, String name, String email, String password, String profilePhotoUrl) {
@@ -25,6 +42,14 @@ public class User {
         this.name = name;
         this.email = email;
         this.password = password;
+    }
+
+    public UserRole getRole() {
+        return role;
+    }
+
+    public void setRole(UserRole role) {
+        this.role = role;
     }
 
     public String getUserId() {
