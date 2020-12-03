@@ -1,5 +1,6 @@
 package com.fdvmlab.foodbyfoodiesforfoodies.views;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -46,7 +47,6 @@ public class ForgotPassword extends AppCompatActivity {
         public void onClick(View v) {
             switch (v.getId()) {
                 case R.id.btnForgotPasswordRecoverPassword:
-                    // TODO: get text from input field, validate, send reset password email
                     String emailAddress = etEmailAddress.getText().toString().trim();
 
                     // check if the entered input is valid
@@ -61,7 +61,7 @@ public class ForgotPassword extends AppCompatActivity {
         }
 
         /**
-         *
+         * Recovery password
          */
         private void sendResetPasswordEmail(String emailAddress) {
             mAuth.sendPasswordResetEmail(emailAddress).addOnCompleteListener(new OnCompleteListener<Void>() {
@@ -70,6 +70,8 @@ public class ForgotPassword extends AppCompatActivity {
                     Log.d("RECOVERY", (task.isSuccessful()) ? "Recover SUCCESS" : " Recover FAIL");
                     //Snackbar.make(btnRecoverPassword,(task.isSuccessful())?"Email Sent!":"Recovery Failed!",Snackbar.LENGTH_SHORT).show();
                     Toast.makeText(getApplicationContext(), (task.isSuccessful()) ? "Email Sent!" : "Recovery Failed!", Toast.LENGTH_SHORT).show();
+                    if (task.isSuccessful())
+                        startActivity(new Intent(getApplicationContext(), Login.class));
                 }
             });
         }
