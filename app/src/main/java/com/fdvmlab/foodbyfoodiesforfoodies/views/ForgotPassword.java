@@ -1,6 +1,9 @@
 package com.fdvmlab.foodbyfoodiesforfoodies.views;
 
 import android.os.Bundle;
+import android.util.Log;
+import android.util.Patterns;
+import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
@@ -26,7 +29,32 @@ public class ForgotPassword extends AppCompatActivity {
         etEmailAddress = findViewById(R.id.etForgotPasswordEmailAddress);
         btnRecoverPassword = findViewById(R.id.btnForgotPasswordRecoverPassword);
 
-        //btnRecoverPassword.setOnClickListener(new ClickListener());
-        
+        btnRecoverPassword.setOnClickListener(new ClickListener());
+
+    }
+
+    private class ClickListener implements View.OnClickListener {
+        @Override
+        public void onClick(View v) {
+            switch (v.getId()) {
+                case R.id.btnForgotPasswordRecoverPassword:
+                    // TODO: get text from input field, validate, send reset password email
+
+                    if (!isEmailValid(etEmailAddress.getText().toString())) {
+                        Log.e("ForgotPass#ClkListener", "Invalid Email");
+                    }
+
+                    //sendResetPasswordEmail();
+                    
+                    break;
+                default:
+            }
+        }
+
+        private boolean isEmailValid(String toString) {
+            if (!Patterns.EMAIL_ADDRESS.matcher(toString).matches())
+                return false;
+            return true;
+        }
     }
 }
