@@ -1,5 +1,6 @@
 package com.fdvmlab.foodbyfoodiesforfoodies.views;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
@@ -67,6 +68,16 @@ public class SignUp extends AppCompatActivity {
         @Override
         public void onClick(View v) {
 
+            switch (v.getId()) {
+                case R.id.btnActivitySignUpSignUp:
+                    //TODO: validate inputs -> create new user -> add user to database
+                    //todo: validate - profile photo, name,email, and password match
+                    break;
+                case R.id.tvActivitySignUpAlreadyHaveAnAccount:
+                    startActivity(new Intent(getApplicationContext(), Login.class));
+                    break;
+                default:
+            }
         }
     }
 }
