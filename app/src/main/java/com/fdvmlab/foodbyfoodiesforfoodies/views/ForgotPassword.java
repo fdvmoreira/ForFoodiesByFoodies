@@ -4,7 +4,6 @@ import android.os.Bundle;
 import android.util.Log;
 import android.util.Patterns;
 import android.view.View;
-import android.widget.Button;
 import android.widget.EditText;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -17,7 +16,6 @@ public class ForgotPassword extends AppCompatActivity {
     FirebaseAuth mAuth = null;
 
     //views ref
-    private Button btnRecoverPassword;
     private EditText etEmailAddress;
 
     @Override
@@ -27,9 +25,9 @@ public class ForgotPassword extends AppCompatActivity {
 
         // init views
         etEmailAddress = findViewById(R.id.etForgotPasswordEmailAddress);
-        btnRecoverPassword = findViewById(R.id.btnForgotPasswordRecoverPassword);
 
-        btnRecoverPassword.setOnClickListener(new ClickListener());
+        //add click listener to recover password button
+        findViewById(R.id.btnForgotPasswordRecoverPassword).setOnClickListener(new ClickListener());
 
     }
 
@@ -39,22 +37,26 @@ public class ForgotPassword extends AppCompatActivity {
             switch (v.getId()) {
                 case R.id.btnForgotPasswordRecoverPassword:
                     // TODO: get text from input field, validate, send reset password email
+                    String emailAddress = etEmailAddress.getText().toString().trim();
 
-                    if (!isEmailValid(etEmailAddress.getText().toString())) {
-                        Log.e("ForgotPass#ClkListener", "Invalid Email");
+                    // check if the entered input is valid
+                    if (!isEmailValid(emailAddress)) {
+                        Log.e("ForgotPass#ClkListener", emailAddress.isEmpty() ? "Email Required" : "Invalid Email");
+                        break;
                     }
-
                     //sendResetPasswordEmail();
-                    
-                    break;
                 default:
             }
         }
 
-        private boolean isEmailValid(String toString) {
-            if (!Patterns.EMAIL_ADDRESS.matcher(toString).matches())
-                return false;
-            return true;
+        /**
+         * Validate email address
+         *
+         * @param emailAddress
+         * @return true if is valid or false otherwise
+         */
+        private boolean isEmailValid(String emailAddress) {
+            return Patterns.EMAIL_ADDRESS.matcher(emailAddress).matches();
         }
     }
 }
