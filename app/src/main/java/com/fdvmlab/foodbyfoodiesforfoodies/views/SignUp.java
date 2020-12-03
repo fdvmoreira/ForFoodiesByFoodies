@@ -1,10 +1,9 @@
 package com.fdvmlab.foodbyfoodiesforfoodies.views;
 
 import android.os.Bundle;
-import android.widget.Button;
+import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -29,8 +28,6 @@ public class SignUp extends AppCompatActivity {
     //views
     private ImageView ivProfilePicture;
     private EditText etFullName, etEmailAddress, etPassword, etConfirmPassword;
-    private Button btnSignUp;
-    private TextView tvSignIn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,6 +55,18 @@ public class SignUp extends AppCompatActivity {
         etPassword = findViewById(R.id.etActivitySignUpNewPassword);
         etConfirmPassword = findViewById(R.id.etActivitySignUpConfirmPassword);
 
-        btnSignUp = findViewById(R.id.btnActivitySignUpSignUp);
+        //add listeners to views
+        findViewById(R.id.btnActivitySignUpSignUp).setOnClickListener(new ClickListener());
+
+        findViewById(R.id.tvActivitySignUpAlreadyHaveAnAccount).setOnClickListener(new ClickListener());
+
+
+    }
+
+    private class ClickListener implements View.OnClickListener {
+        @Override
+        public void onClick(View v) {
+
+        }
     }
 }
