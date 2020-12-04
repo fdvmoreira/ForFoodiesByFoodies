@@ -5,7 +5,6 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
@@ -14,6 +13,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 
 import com.fdvmlab.foodbyfoodiesforfoodies.R;
@@ -177,7 +177,7 @@ public class MainActivity extends AppCompatActivity {
 
                 case R.id.menu_item_reviews:
                     // see users reviews
-                    drawerLayout.closeDrawer(Gravity.LEFT);
+                    drawerLayout.closeDrawer(GravityCompat.START);
 
                     startActivity(new Intent(getApplicationContext(), UserProfile.class));
                     break;
@@ -190,7 +190,7 @@ public class MainActivity extends AppCompatActivity {
                     }
 
                     // create new user
-                    drawerLayout.closeDrawer(Gravity.LEFT);
+                    drawerLayout.closeDrawer(GravityCompat.START);
 
                     startActivity(new Intent(getApplicationContext(), SignUp.class)
                             .putExtra("USER_ROLE", UserRole.CRITIC)
@@ -200,7 +200,7 @@ public class MainActivity extends AppCompatActivity {
                 case R.id.menu_item_logout:
                     // sign up and finish terminate activity
 
-                    drawerLayout.closeDrawer(Gravity.LEFT);
+                    drawerLayout.closeDrawer(GravityCompat.START);
 
                     if (mUser != null) mAuth.signOut();
                     startActivity(new Intent(getApplicationContext(), Login.class));
