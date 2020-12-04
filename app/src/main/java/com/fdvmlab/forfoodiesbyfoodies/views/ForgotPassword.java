@@ -42,18 +42,16 @@ public class ForgotPassword extends AppCompatActivity {
     private class ClickListener implements View.OnClickListener {
         @Override
         public void onClick(View v) {
-            switch (v.getId()) {
-                case R.id.btnForgotPasswordRecoverPassword:
-                    String emailAddress = etEmailAddress.getText().toString().trim();
+            if (v.getId() == R.id.btnForgotPasswordRecoverPassword) {
+                String emailAddress = etEmailAddress.getText().toString().trim();
 
-                    // check if the entered input is valid
-                    if (!Util.isEmailValid(emailAddress)) {
-                        Log.e("ForgotPass#ClkListener", emailAddress.isEmpty() ? "Email Required" : "Invalid Email");
-                        break;
-                    }
-                    //send email
-                    sendResetPasswordEmail(emailAddress);
-                default:
+                // check if the entered input is valid
+                if (!Util.isEmailValid(emailAddress)) {
+                    Log.e("ForgotPass#ClkListener", emailAddress.isEmpty() ? "Email Required" : "Invalid Email");
+                    return;
+                }
+                //send email
+                sendResetPasswordEmail(emailAddress);
             }
         }
 
