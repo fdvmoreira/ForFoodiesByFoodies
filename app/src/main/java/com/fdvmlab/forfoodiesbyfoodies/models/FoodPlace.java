@@ -1,8 +1,12 @@
 package com.fdvmlab.forfoodiesbyfoodies.models;
 
+import android.net.Uri;
+
 public class FoodPlace {
     private String name, postCode, phoneNumber, photoUrl;
     private Address address;
+    private Rating rating;
+    private Uri photo;
 
     public FoodPlace(String name, Address address, String phoneNumber, String photoUrl) {
         this.name = name;
@@ -12,6 +16,16 @@ public class FoodPlace {
     }
 
     public FoodPlace() {
+    }
+
+    public FoodPlace(String name, String postCode, String phoneNumber, String photoUrl, Address address, Rating rating, Uri photo) {
+        this.name = name;
+        this.postCode = postCode;
+        this.phoneNumber = phoneNumber;
+        this.photoUrl = photoUrl;
+        this.address = address;
+        this.rating = rating;
+        this.photo = photo;
     }
 
     public String getName() {
@@ -52,5 +66,21 @@ public class FoodPlace {
 
     public void setPhotoUrl(String photoUrl) {
         this.photoUrl = photoUrl;
+    }
+
+    public Rating getRating() {
+        return rating;
+    }
+
+    public void setRating(Rating rating) {
+        this.rating = rating;
+    }
+
+    public Uri getPhoto() {
+        return photo;
+    }
+
+    public void setPhoto(Uri photo) {
+        this.photo = photo;
     }
 }
