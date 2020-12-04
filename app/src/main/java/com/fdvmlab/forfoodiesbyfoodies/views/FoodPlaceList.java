@@ -21,8 +21,9 @@ public class FoodPlaceList extends AppCompatActivity {
     // type: restaurant or street food stall
     private int foodPlaceType = 0;
 
-    // list
-    List<FoodPlace> list = new ArrayList<>();
+    // list of food place
+    private List<FoodPlace> list = new ArrayList<>();
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,7 +37,7 @@ public class FoodPlaceList extends AppCompatActivity {
             e.printStackTrace();
         }
 
-        // init views
+        // init button and add listener
         findViewById(R.id.fbtnActivityFoodPlaceListAddNew).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -45,6 +46,13 @@ public class FoodPlaceList extends AppCompatActivity {
                 startActivity(new Intent(getApplicationContext(), AddFoodPlace.class).putExtra("FOOD_PLACE_TYPE", foodPlaceType));
             }
         });
+
+        // Add dummy data to list
+        /**list.add(new Restaurant("Zayani",
+         new Address(395,"Simpson Road","UB7 9HU","Strat"),
+         "789 45789 7845",
+         "",
+         "45cvDSCvftt665dsEEF456adGFGH98sc"));*/
 
         //set adapter
         RecyclerView recyclerView = (RecyclerView) findViewById(R.id.rvFoodPlaceList);
