@@ -10,7 +10,7 @@
         android:id="@+id/ivActivityLeaveReviewFoodPlacePhoto"
         android:layout_width="match_parent"
         android:layout_height="200dp"
-        android:contentDescription="@string/todo"
+        android:contentDescription="@string/foodPlaceImage"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         tools:layout_editor_absoluteX="104dp"
@@ -26,7 +26,7 @@
         android:textSize="20sp"
         android:textStyle="bold"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/ivActivityLeaveReviewFoodPlacePhoto"
+        app:layout_constraintTop_toBottomOf="@id/ivActivityLeaveReviewFoodPlacePhoto" />
 
     <TextView
         android:id="@+id/tvActivityLeaveReviewCuisine"
@@ -67,7 +67,7 @@
         android:layout_width="24dp"
         android:layout_height="24dp"
         android:layout_margin="15dp"
-        android:contentDescription="@string/todo"
+        android:contentDescription="@string/Location_icon"
         android:src="@drawable/ic_location_24"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toBottomOf="@id/ivIconPhone" />
@@ -113,9 +113,6 @@
             android:inputType="textMultiLine" />
 
 
-
-
-
     </com.google.android.material.textfield.TextInputLayout>
 
 
@@ -123,15 +120,13 @@
         android:id="@+id/btnActivityLeaveReview"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textColor="@color/buttonText"
-        android:background="@drawable/custom_button"
-
-        android:layout_marginBottom="15dp"
-        android:text="@string/add_comment"
-        android:theme="@style/Theme.MaterialComponents.DayNight.Dialog"
-        app:layout_constraintBottom_toBottomOf="parent"
         android:layout_margin="15dp"
-     app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginBottom="15dp"
+        android:background="@drawable/custom_button"
+        android:text="@string/add_comment"
+        android:textColor="@color/buttonText"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
