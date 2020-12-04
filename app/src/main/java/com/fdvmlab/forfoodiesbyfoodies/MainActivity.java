@@ -43,8 +43,9 @@ import java.io.Serializable;
 public class MainActivity extends AppCompatActivity {
 
     // const type
-    final int RESTAURANT = 1;
-    final int STREET_FOOD_STALL = 2;
+    public static final String FOOD_PLACE_TYPE = "FOOD_PLACE_TYPE";
+    public static final int RESTAURANT = 1;
+    public static final int STREET_FOOD_STALL = 2;
 
     // Firebase component
     private FirebaseAuth mAuth = null;
