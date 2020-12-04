@@ -27,7 +27,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/tvNavDrawerHeaderTitle"
-        android:layout_marginTop="30dp"
+        android:layout_marginTop="40dp"
         android:layout_toEndOf="@+id/imgNavDrawerUserProfilePicture"
         android:layout_toRightOf="@+id/imgNavDrawerUserProfilePicture"
         android:text="@string/Full_name" />
