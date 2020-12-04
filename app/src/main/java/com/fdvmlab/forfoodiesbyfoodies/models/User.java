@@ -1,6 +1,8 @@
-package com.fdvmlab.foodbyfoodiesforfoodies.models;
+package com.fdvmlab.forfoodiesbyfoodies.models;
 
-public class User {
+import java.io.Serializable;
+
+public class User implements Serializable {
     private String userId, name, email, password, profilePhotoUrl;
     private UserRole role;
 
