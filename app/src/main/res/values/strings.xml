@@ -42,4 +42,5 @@ with our T&amp;Cs</string>
     <string name="restaurant_type">Restaurant Type</string>
     <string name="Leave_a_review">Message...</string>
     <string name="add_comment">ADD COMMENT</string>
+    <string name="button_Book_a_table">Book</string>
 </resources>
