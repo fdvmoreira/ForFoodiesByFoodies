@@ -1,4 +1,4 @@
-package com.fdvmlab.foodbyfoodiesforfoodies;
+package com.fdvmlab.forfoodiesbyfoodies;
 
 import android.util.Patterns;
 
