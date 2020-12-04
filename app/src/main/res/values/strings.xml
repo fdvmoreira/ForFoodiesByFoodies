@@ -38,4 +38,8 @@ with our T&amp;Cs</string>
     <string name="tsandcs_label">By entering your email address you agree
 with our T&amp;Cs</string>
     <string name="confirmPassword">Confirm Password</string>
+    <string name="restaurant_name">Restaurant Name</string>
+    <string name="restaurant_type">Restaurant Type</string>
+    <string name="Leave_a_review">Message...</string>
+    <string name="add_comment">ADD COMMENT</string>
 </resources>

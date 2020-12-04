@@ -7,4 +7,9 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
+    
+    <style name="ratingBar" parent="AppTheme">
+        <item name="colorControlActivated">@color/colorActive</item>
+        <item name="colorControlNormal">@color/colorInactive</item>
+    </style>
 </resources>

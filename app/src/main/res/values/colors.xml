@@ -3,4 +3,10 @@
     <color name="colorPrimary">#6200EE</color>
     <color name="colorPrimaryDark">#3700B3</color>
     <color name="colorAccent">#03DAC5</color>
+    <color name="textColorPrimary">#000000</color>
+
+    //rating bar colors
+    <color name="colorActive">#FDA14F</color>
+    <color name="colorInactive">#C9C9D1</color>
+
 </resources>
