@@ -1,7 +1,10 @@
 package com.fdvmlab.forfoodiesbyfoodies;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
@@ -19,11 +22,18 @@ import com.fdvmlab.forfoodiesbyfoodies.models.UserRole;
 import com.fdvmlab.forfoodiesbyfoodies.views.Login;
 import com.fdvmlab.forfoodiesbyfoodies.views.ReviewsList;
 import com.fdvmlab.forfoodiesbyfoodies.views.SignUp;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
@@ -93,8 +103,47 @@ public class MainActivity extends AppCompatActivity {
         super.onStart();
 
         // Fetch the user's details from database
-//        databaseReference
-//        storageReference
+        databaseReference.child(mUser.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                // get user
+                mCurrentUser = snapshot.getValue(User.class);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Log.e("READ", " Cancelled : " + error.getMessage());
+            }
+        });
+
+        //download the profile photo
+        storageReference.child(mUser.getUid() + ".jpg").getBytes(1024 * 1024).addOnCompleteListener(new OnCompleteListener<byte[]>() {
+            @Override
+            public void onComplete(@NonNull Task<byte[]> task) {
+                // download complete
+                if (!task.isSuccessful()) {
+                    Log.e("DOWNLOAD", "Complete");
+                }
+            }
+        }).addOnSuccessListener(new OnSuccessListener<byte[]>() {
+            @Override
+            public void onSuccess(byte[] bytes) {
+                // download success
+                Log.d("DOWNLOAD", "Success ");
+
+                // set to image view
+                byte[] data = bytes;
+                Bitmap bitmap = BitmapFactory.decodeByteArray(data, 0, bytes.length);
+
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                // fail to download image
+                Log.e("DOWNLOAD", " Failed :" + e.getMessage());
+            }
+        });
+
     }
 
     @Override
