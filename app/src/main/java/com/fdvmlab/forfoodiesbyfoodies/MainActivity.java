@@ -20,8 +20,8 @@ import com.fdvmlab.foodbyfoodiesforfoodies.R;
 import com.fdvmlab.forfoodiesbyfoodies.models.User;
 import com.fdvmlab.forfoodiesbyfoodies.models.UserRole;
 import com.fdvmlab.forfoodiesbyfoodies.views.Login;
-import com.fdvmlab.forfoodiesbyfoodies.views.ReviewsList;
 import com.fdvmlab.forfoodiesbyfoodies.views.SignUp;
+import com.fdvmlab.forfoodiesbyfoodies.views.UserProfile;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -181,7 +181,7 @@ public class MainActivity extends AppCompatActivity {
                     // see users reviews
                     drawerLayout.closeDrawer(Gravity.LEFT);
 
-                    startActivity(new Intent(getApplicationContext(), ReviewsList.class));
+                    startActivity(new Intent(getApplicationContext(), UserProfile.class));
                     break;
 
                 case R.id.menu_item_add_new_user:
