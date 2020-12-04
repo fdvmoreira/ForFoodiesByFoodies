@@ -42,4 +42,6 @@ with our T&amp;Cs</string>
     <string name="restaurant_type">Restaurant Type</string>
     <string name="Leave_a_review">Message...</string>
     <string name="add_comment">ADD COMMENT</string>
+    <string name="todo">TODO</string>
+    <string name="phone_icon">phone icon</string>
 </resources>
