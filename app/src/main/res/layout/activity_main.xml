@@ -20,7 +20,7 @@
 
         <!-- Restaurant Card -->
         <androidx.cardview.widget.CardView
-            android:id="@+id/cvMainLayoutRestaurant"
+            android:id="@+id/cvMainActivityRestaurant"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_margin="5dp"
@@ -49,7 +49,7 @@
 
         <!-- Street food stall Card -->
         <androidx.cardview.widget.CardView
-            android:id="@+id/cvMainLayoutStreetFoodStall"
+            android:id="@+id/cvMainActivityStreetFoodStall"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_margin="5dp"
