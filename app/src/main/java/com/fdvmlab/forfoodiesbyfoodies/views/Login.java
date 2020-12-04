@@ -12,8 +12,8 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.fdvmlab.forfoodiesbyfoodies.MainActivity;
 import com.fdvmlab.foodbyfoodiesforfoodies.R;
+import com.fdvmlab.forfoodiesbyfoodies.MainActivity;
 import com.fdvmlab.forfoodiesbyfoodies.models.UserRole;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -45,6 +45,7 @@ public class Login extends AppCompatActivity {
 
         // init firebase auth
         mAuth = FirebaseAuth.getInstance();
+        mUser = mAuth.getCurrentUser();
 
         // init views
         etEmailAddress = findViewById(R.id.etActivityLoginEmailAddress);
@@ -73,29 +74,32 @@ public class Login extends AppCompatActivity {
      * @param password
      */
     private void signin(String email, String password) {
-        //Log any current user out
-        //mAuth.signOut();
 
-        //signin
-        mAuth.signInWithEmailAndPassword(email, password)
-                .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        //
-                        task.addOnSuccessListener(new OnSuccessListener<AuthResult>() {
-                            @Override
-                            public void onSuccess(AuthResult authResult) {
-                                Log.d("Login#SignIn#SUCCESS", authResult.getUser().getEmail() + " Logged In Successfully.");
-                                mUser = authResult.getUser();
-                            }
-                        }).addOnFailureListener(new OnFailureListener() {
-                            @Override
-                            public void onFailure(@NonNull Exception e) {
-                                Log.e("Login#SignIn#FAIL", e.getMessage() + "");
-                            }
-                        });
-                    }
-                });
+        // sign in
+        mAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+            @Override
+            public void onComplete(@NonNull Task<AuthResult> task) {
+                // complete
+                if (!task.isSuccessful()) {
+                    Log.e("LOGIN", " Some went wrong!");
+                    return;
+                }
+                mUser = task.getResult().getUser();
+                startActivity(new Intent(getApplicationContext(), MainActivity.class).putExtra("", ""));
+            }
+        }).addOnSuccessListener(new OnSuccessListener<AuthResult>() {
+            @Override
+            public void onSuccess(AuthResult authResult) {
+                // success
+                Log.d("SUCCESS", " Login successful");
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                // login failed
+                Log.d("FAILED", " Login failed " + e.getMessage());
+            }
+        });
     }
 
     /**
@@ -124,7 +128,7 @@ public class Login extends AppCompatActivity {
                         signin(etEmailAddress.getText().toString(), etPassword.getText().toString());
                         if (mUser != null) {
                             intent = new Intent(getApplicationContext(), MainActivity.class);
-                            intent.putExtra("uuid", mUser.getUid());
+                            intent.putExtra("uuid", mAuth.getCurrentUser().getUid());
 
                             // terminate this activity
                             finish();
@@ -133,7 +137,7 @@ public class Login extends AppCompatActivity {
                     break;
 
                 case R.id.tvActivityLoginDoNotHaveAnAccount:
-                    Log.d("Login#ClickListener: ", " Do not have an account");
+                    Log.d("ACCOUNT", " Do not have an account");
                     // Go sign Up first
                     intent = new Intent(getApplicationContext(), SignUp.class).putExtra("USER_ROLE", UserRole.STANDARD);
                     break;
