@@ -52,8 +52,14 @@ public class MainActivity extends AppCompatActivity {
     private ActionBarDrawerToggle drawerToggle = null;
     private DrawerLayout drawerLayout = null;
 
+    // Drawer header views
+    private TextView etNavHeaderName;
+    private TextView etNavHeaderEmailAddress;
+    private ImageView ivNavHeaderProfilePhoto;
+
     // Current user
     private User mCurrentUser = new User("Nan", "manil@mail.com", "123456", UserRole.ADMIN);
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -85,17 +91,16 @@ public class MainActivity extends AppCompatActivity {
         NavigationView navigationView = findViewById(R.id.drawerNavigationView);
         navigationView.setNavigationItemSelectedListener(new NavigationViewListener());
 
-        //Nav header
+        // Nav header views
         View navHeaderView = navigationView.getHeaderView(0);
 
-        TextView navHFN = navHeaderView.findViewById(R.id.tvNavDrawerHeaderFullName);
-        //navHFN.setText(mAuth.getCurrentUser().getDisplayName());
+        etNavHeaderName = navHeaderView.findViewById(R.id.tvNavDrawerHeaderFullName);
+        etNavHeaderName.setText(mCurrentUser.getName());
 
-        TextView navHEA = navHeaderView.findViewById(R.id.tvNavDrawerHeaderEmailAddress);
-        //navHEA.setText(mAuth.getCurrentUser().getEmail());
+        etNavHeaderEmailAddress = navHeaderView.findViewById(R.id.tvNavDrawerHeaderEmailAddress);
+        etNavHeaderEmailAddress.setText(mCurrentUser.getEmail());
 
-        ImageView navHPP = navHeaderView.findViewById(R.id.imgNavDrawerUserProfilePicture);
-        //Picasso.get().load(mAuth.getCurrentUser().getPhotoUrl()).fit().into(navHPP);
+        ivNavHeaderProfilePhoto = navHeaderView.findViewById(R.id.imgNavDrawerUserProfilePicture);
     }
 
     @Override
@@ -116,26 +121,35 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        //download the profile photo
-        storageReference.child(mUser.getUid() + ".jpg").getBytes(1024 * 1024).addOnCompleteListener(new OnCompleteListener<byte[]>() {
+        // download the profile photo
+        final long ONE_MEGABYTE = 1024 * 1024;
+        storageReference.child(mUser.getUid() + ".jpg").getBytes(ONE_MEGABYTE).addOnCompleteListener(new OnCompleteListener<byte[]>() {
             @Override
             public void onComplete(@NonNull Task<byte[]> task) {
                 // download complete
                 if (!task.isSuccessful()) {
                     Log.e("DOWNLOAD", "Complete");
                 }
+
+                // fill the drawer nav header with name and email
+                etNavHeaderName.setText(mCurrentUser.getName() + ""
+                        + (mCurrentUser.getRole().toString().equals(UserRole.ADMIN.toString()) ? "(Admin)" : ""));
+                etNavHeaderEmailAddress.setText(mCurrentUser.getEmail());
             }
+
         }).addOnSuccessListener(new OnSuccessListener<byte[]>() {
             @Override
             public void onSuccess(byte[] bytes) {
                 // download success
                 Log.d("DOWNLOAD", "Success ");
 
-                // set to image view
+                // decode the bytes into profile photo and add it image view
                 byte[] data = bytes;
-                Bitmap bitmap = BitmapFactory.decodeByteArray(data, 0, bytes.length);
+                Bitmap photo = BitmapFactory.decodeByteArray(data, 0, bytes.length);
+                ivNavHeaderProfilePhoto.setImageBitmap(photo);
 
             }
+
         }).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
@@ -143,7 +157,6 @@ public class MainActivity extends AppCompatActivity {
                 Log.e("DOWNLOAD", " Failed :" + e.getMessage());
             }
         });
-
     }
 
     @Override
