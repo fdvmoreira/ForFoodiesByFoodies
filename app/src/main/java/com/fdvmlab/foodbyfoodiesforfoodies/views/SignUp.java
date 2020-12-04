@@ -40,7 +40,7 @@ public class SignUp extends AppCompatActivity {
     // Pick an image request code
     final int REQUEST_CODE = 200;
 
-    private User admin = null;
+    private User mAdmin = null;
 
     // Firebase Auth
     private FirebaseAuth mAuth;
@@ -94,6 +94,17 @@ public class SignUp extends AppCompatActivity {
         findViewById(R.id.tvActivitySignUpAlreadyHaveAnAccount).setOnClickListener(new ClickListener());
 
 
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        // get the admin user
+        if (getIntent().getExtras().get("ADMIN") == null) {
+            //create blank object
+            mAdmin = new User();
+        }
+        mAdmin = (User) getIntent().getExtras().get("ADMIN");
     }
 
     /**
@@ -190,14 +201,14 @@ public class SignUp extends AppCompatActivity {
                                                 Toast.makeText(getApplicationContext(), "User created successfully!", Toast.LENGTH_LONG).show();
 
                                                 // If the App user is not admin it is taken to sign in activity
-                                                if (admin == null) {
+                                                if (mAdmin == null) {
                                                     mAuth.signOut();
                                                     startActivity(new Intent(getApplicationContext(), Login.class));
                                                     return;
                                                 }
 
                                                 //sign in the admin again
-                                                mAuth.signInWithEmailAndPassword(admin.getEmail(), admin.getPassword()).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                                                mAuth.signInWithEmailAndPassword(mAdmin.getEmail(), mAdmin.getPassword()).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                                                     @Override
                                                     public void onComplete(@NonNull Task<AuthResult> task) {
                                                         //auth complete
@@ -213,7 +224,7 @@ public class SignUp extends AppCompatActivity {
                                                             return;
                                                         }
                                                         // admin sign in successfully
-                                                        Toast.makeText(getApplicationContext(), "Logged in as " + admin.getName(), Toast.LENGTH_LONG).show();
+                                                        Toast.makeText(getApplicationContext(), "Logged in as " + mAdmin.getName(), Toast.LENGTH_LONG).show();
                                                     }
                                                 });
                                             }
