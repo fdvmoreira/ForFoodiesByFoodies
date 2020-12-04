@@ -1,4 +1,4 @@
-package com.fdvmlab.foodbyfoodiesforfoodies.views;
+package com.fdvmlab.forfoodiesbyfoodies.views;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -9,6 +9,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -16,9 +17,9 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.fdvmlab.foodbyfoodiesforfoodies.R;
-import com.fdvmlab.foodbyfoodiesforfoodies.Util;
-import com.fdvmlab.foodbyfoodiesforfoodies.models.User;
-import com.fdvmlab.foodbyfoodiesforfoodies.models.UserRole;
+import com.fdvmlab.forfoodiesbyfoodies.Util;
+import com.fdvmlab.forfoodiesbyfoodies.models.User;
+import com.fdvmlab.forfoodiesbyfoodies.models.UserRole;
 import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -52,6 +53,7 @@ public class SignUp extends AppCompatActivity {
     //views
     private ImageView ivProfilePicture;
     private EditText etFullName, etEmailAddress, etPassword, etConfirmPassword;
+    private ProgressBar pbProgressbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,10 +75,14 @@ public class SignUp extends AppCompatActivity {
         ivProfilePicture.setDrawingCacheEnabled(true);
         ivProfilePicture.buildDrawingCache();
 
+
         etFullName = findViewById(R.id.etActivitySignUpFullName);
         etEmailAddress = findViewById(R.id.etActivitySignUpEmailAddress);
         etPassword = findViewById(R.id.etActivitySignUpNewPassword);
         etConfirmPassword = findViewById(R.id.etActivitySignUpConfirmPassword);
+
+        pbProgressbar = findViewById(R.id.pbSignUpActivityProgressbar);
+        pbProgressbar.setVisibility(View.GONE);
 
         //add focus listener
         etConfirmPassword.setOnFocusChangeListener(new View.OnFocusChangeListener() {
@@ -102,11 +108,15 @@ public class SignUp extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
         // get the admin user
-        if (getIntent().getExtras().get("ADMIN") == null) {
-            //create blank object
-            mAdmin = new User();
+        try {
+            if (getIntent().getExtras().get("ADMIN") == null) {
+                //create blank object
+                mAdmin = new User();
+            }
+            mAdmin = (User) getIntent().getExtras().get("ADMIN");
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-        mAdmin = (User) getIntent().getExtras().get("ADMIN");
     }
 
     /**
@@ -131,7 +141,9 @@ public class SignUp extends AppCompatActivity {
         }
     }
 
+
     private void createNewUser(@NotNull final User user) {
+
         // Create new Auth
         mAuth.createUserWithEmailAndPassword(user.getEmail(), user.getPassword())
                 .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
@@ -271,6 +283,7 @@ public class SignUp extends AppCompatActivity {
                         }
                     }
                 });
+
     }
 
     /**
@@ -339,6 +352,9 @@ public class SignUp extends AppCompatActivity {
                         e.getMessage();
                     }
 
+                    // show progress bar
+                    pbProgressbar.setVisibility(View.VISIBLE);
+
                     // Create user
                     createNewUser(new User(
                             etFullName.getText().toString(),
@@ -346,7 +362,10 @@ public class SignUp extends AppCompatActivity {
                             etPassword.getText().toString(),
 
                             // if role was not passed it will be standard
-                            (role != null) ? role.name() : UserRole.STANDARD.name()));
+                            (role != null) ? role : UserRole.STANDARD));
+
+                    // hide progressbar
+                    pbProgressbar.setVisibility(View.GONE);
 
                     break;
 
