@@ -58,7 +58,7 @@ public class MainActivity extends AppCompatActivity {
     private ImageView ivNavHeaderProfilePhoto;
 
     // Current user
-    private User mCurrentUser = new User("Nan", "manil@mail.com", "123456", UserRole.ADMIN);
+    private User mCurrentUser = new User("Nani", "manil@mail.com", "123456", UserRole.ADMIN);
 
 
     @Override
