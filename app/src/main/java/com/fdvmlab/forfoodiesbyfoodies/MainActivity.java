@@ -62,6 +62,9 @@ public class MainActivity extends AppCompatActivity {
     private TextView etNavHeaderEmailAddress;
     private ImageView ivNavHeaderProfilePhoto;
 
+    // cards
+    // private CardView cvRestaurant, cvStreetFoodStall;
+
     // Current user
     private User mCurrentUser = new User("Nani", "manil@mail.com", "123456", UserRole.ADMIN);
 
@@ -106,6 +109,10 @@ public class MainActivity extends AppCompatActivity {
         etNavHeaderEmailAddress.setText(mCurrentUser.getEmail());
 
         ivNavHeaderProfilePhoto = navHeaderView.findViewById(R.id.imgNavDrawerUserProfilePicture);
+
+        // card views
+        findViewById(R.id.cvMainActivityRestaurant).setOnClickListener(new ClickListener());
+        findViewById(R.id.cvMainActivityStreetFoodStall).setOnClickListener(new ClickListener());
     }
 
     @Override
@@ -134,6 +141,7 @@ public class MainActivity extends AppCompatActivity {
                 // download complete
                 if (!task.isSuccessful()) {
                     Log.e("DOWNLOAD", "Complete");
+                    return;
                 }
 
                 // fill the drawer nav header with name and email
