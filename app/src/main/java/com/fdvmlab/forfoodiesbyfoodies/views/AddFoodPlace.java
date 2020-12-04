@@ -1,6 +1,5 @@
 package com.fdvmlab.forfoodiesbyfoodies.views;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 
@@ -28,12 +27,12 @@ public class AddFoodPlace extends AppCompatActivity {
 
         //save button
         // init views
-        findViewById(R.id.fbtnActivityFoodPlaceListAddNew).setOnClickListener(new View.OnClickListener() {
+        findViewById(R.id.btnAddFoodPlaceSaveFoodPlace).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
                 //start activity to create new food place and pass type as extra
-                startActivity(new Intent(getApplicationContext(), AddFoodPlace.class).putExtra("FOOD_PLACE_TYPE", foodPlaceType));
+
             }
         });
     }
