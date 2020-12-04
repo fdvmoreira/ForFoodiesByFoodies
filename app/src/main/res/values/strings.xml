@@ -1,3 +1,41 @@
 <resources>
-    <string name="app_name">FoodByFoodiesForFoodies</string>
+    <string name="app_name">ForFoodiesByFoodies</string>
+    <string name="app_logo">App Logo</string>
+    <string name="email_address">Email Address</string>
+    <string name="password">Password</string>
+    <string name="forgot_password_reset_here">Forgot password? Reset Here</string>
+    <string name="sign_in">Sign In</string>
+    <string name="do_not_have_an_account">Don\'t have an account? Sign Up</string>
+    <string name="new_password">New Password</string>
+    <string name="confirm_password">Confirm Password</string>
+    <string name="profile_picture">Profile picture</string>
+    <string name="full_name">Full Name</string>
+    <string name="terms_and_conditions_lab">By entering your email address you agree
+with our T&amp;Cs</string>
+    <string name="avatar">User avatar</string>
+    <string name="Close">Close</string>
+    <string name="Open">Open</string>
+    <string name="restaurant">Restaurant</string>
+    <string name="street_food_stall">Street Food Stall</string>
+    <string name="name">Name</string>
+    <string name="email">Email Address</string>
+    <string name="phone_number">Phone Number</string>
+    <string name="reviews">Reviews</string>
+    <string name="logout">Logout</string>
+    <string name="my_account_label">My Account</string>
+    <string name="edit_profile">Edit Profile</string>
+    <string name="address">Address</string>
+    <string name="restaurant_photo">Restaurant Photo</string>
+    <string name="post_code">Post Code</string>
+    <string name="add_restaurant">Add Restaurant</string>
+    <string name="vegetarian">Vegetarian</string>
+    <string name="recover_password">Recover Password</string>
+    <string name="sign_up">Sign Up</string>
+    <string name="forgot_password">Forgot password? Recover Here</string>
+    <string name="already_have_an_account_sign_up">Already have an account? Sign In</string>
+    <string name="do_not_have_an_account_sign_up">Don\'t have an account? Sign Up</string>
+    <string name="Full_name">Full Name</string>
+    <string name="tsandcs_label">By entering your email address you agree
+with our T&amp;Cs</string>
+    <string name="confirmPassword">Confirm Password</string>
 </resources>
