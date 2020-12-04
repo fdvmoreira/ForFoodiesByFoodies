@@ -18,6 +18,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.fdvmlab.foodbyfoodiesforfoodies.R;
 import com.fdvmlab.foodbyfoodiesforfoodies.Util;
 import com.fdvmlab.foodbyfoodiesforfoodies.models.User;
+import com.fdvmlab.foodbyfoodiesforfoodies.models.UserRole;
 import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -26,7 +27,6 @@ import com.google.android.gms.tasks.Task;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
@@ -37,14 +37,14 @@ import java.io.ByteArrayOutputStream;
 
 public class SignUp extends AppCompatActivity {
 
+    // Pick an image request code
     final int REQUEST_CODE = 200;
-    private Bitmap bitmapProfilePicture;
+
+    private User admin = null;
+
     // Firebase Auth
     private FirebaseAuth mAuth;
-    private FirebaseUser mUser;
-    private FirebaseStorage mStorage;
-    private StorageReference mStorageProfilePicturesRef;
-    private FirebaseDatabase mDatabase;
+    private StorageReference mProfilePicturesStorageRef;
     private DatabaseReference mDatabaseUsersRef;
 
     //views
@@ -61,13 +61,10 @@ public class SignUp extends AppCompatActivity {
 
         // Initialize firebase components
         mAuth = FirebaseAuth.getInstance();
-        mUser = mAuth.getCurrentUser();
 
-        mStorage = FirebaseStorage.getInstance();
-        mStorageProfilePicturesRef = mStorage.getReference("profile_pictures");
+        mProfilePicturesStorageRef = FirebaseStorage.getInstance().getReference("profile_pictures");
 
-        mDatabase = FirebaseDatabase.getInstance();
-        mDatabaseUsersRef = mDatabase.getReference("users");
+        mDatabaseUsersRef = FirebaseDatabase.getInstance().getReference("users");
 
         // init views
         ivProfilePicture = findViewById(R.id.ivActivitySigUpProfilePicture);
@@ -112,7 +109,7 @@ public class SignUp extends AppCompatActivity {
                 if (data != null) {
                     if (data.getData() != null) {
                         ivProfilePicture.setImageURI(data.getData());
-                        Snackbar.make(ivProfilePicture, "Upload Successful", Snackbar.LENGTH_LONG).show();
+                        Snackbar.make(ivProfilePicture, "Image load Successful", Snackbar.LENGTH_LONG).show();
                     }
                 }
             } else {
@@ -142,7 +139,7 @@ public class SignUp extends AppCompatActivity {
 
 
                             // Upload the profile photo
-                            final StorageReference photoRef = mStorageProfilePicturesRef.child(user.getUserId() + ".jpg");
+                            final StorageReference photoRef = mProfilePicturesStorageRef.child(user.getUserId() + ".jpg");
                             photoRef.putBytes(byteArrayOutputStream.toByteArray()).continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
                                 @Override
                                 public Task<Uri> then(@NonNull Task<UploadTask.TaskSnapshot> task) throws Exception {
@@ -181,22 +178,50 @@ public class SignUp extends AppCompatActivity {
                                             public void onComplete(@NonNull Task<Void> task) {
                                                 // save complete
                                                 if (task.isSuccessful())
-                                                    Toast.makeText(getApplicationContext(), " User " + user.getUserId(), Toast.LENGTH_SHORT).show();
+                                                    Log.d("DATABASE", "Created User ID :" + user.getUserId());
+                                                //Toast.makeText(getApplicationContext(), " User " + user.getUserId(), Toast.LENGTH_SHORT).show();
                                             }
 
                                         }).addOnSuccessListener(new OnSuccessListener<Void>() {
                                             @Override
                                             public void onSuccess(Void aVoid) {
-                                                // save success
+                                                // save to database success
                                                 Log.d("DATABASE", "User was saved!");
-                                                Toast.makeText(getApplicationContext(), "User saved successfully!", Toast.LENGTH_SHORT).show();
+                                                Toast.makeText(getApplicationContext(), "User created successfully!", Toast.LENGTH_LONG).show();
 
+                                                // If the App user is not admin it is taken to sign in activity
+                                                if (admin == null) {
+                                                    mAuth.signOut();
+                                                    startActivity(new Intent(getApplicationContext(), Login.class));
+                                                    return;
+                                                }
+
+                                                //sign in the admin again
+                                                mAuth.signInWithEmailAndPassword(admin.getEmail(), admin.getPassword()).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                                                    @Override
+                                                    public void onComplete(@NonNull Task<AuthResult> task) {
+                                                        //auth complete
+
+                                                        if (!task.isSuccessful()) {
+                                                            // sign back in has failed
+                                                            try {
+                                                                Log.e("AUTH", "Unable to sign in: " + task.getException().getMessage());
+                                                                startActivity(new Intent(getApplicationContext(), Login.class));
+                                                            } catch (Exception e) {
+                                                                e.printStackTrace();
+                                                            }
+                                                            return;
+                                                        }
+                                                        // admin sign in successfully
+                                                        Toast.makeText(getApplicationContext(), "Logged in as " + admin.getName(), Toast.LENGTH_LONG).show();
+                                                    }
+                                                });
                                             }
 
                                         }).addOnFailureListener(new OnFailureListener() {
                                             @Override
                                             public void onFailure(@NonNull Exception e) {
-                                                // save failed
+                                                // save to database failed
                                                 Log.e("DATABASE", e.getMessage() + "");
                                                 Toast.makeText(getApplicationContext(), "User was NOT saved!", Toast.LENGTH_SHORT).show();
                                             }
@@ -208,9 +233,7 @@ public class SignUp extends AppCompatActivity {
                                 public void onSuccess(Uri uri) {
                                     // upload successful
                                     Log.d("STORAGE", "Image upload was successful! ");
-                                    Toast.makeText(getApplicationContext(), "Profile picture uploaded successfully!", Toast.LENGTH_SHORT).show();
-                                    // Leave the activity
-                                    startActivity(new Intent(getApplicationContext(), Login.class));
+                                    //Toast.makeText(getApplicationContext(), "Profile picture uploaded successfully!", Toast.LENGTH_SHORT).show();
                                 }
                             }).addOnFailureListener(new OnFailureListener() {
                                 @Override
@@ -225,7 +248,7 @@ public class SignUp extends AppCompatActivity {
 
                             if (task.getException() != null) {
                                 try {
-                                    //New Auth was not created
+                                    // New Auth was not created
                                     Toast.makeText(getApplicationContext(), "" + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
                                     task.getException().printStackTrace();
                                 } catch (Exception e) {
@@ -247,15 +270,14 @@ public class SignUp extends AppCompatActivity {
         public void onClick(View v) {
             switch (v.getId()) {
                 case R.id.ivActivitySigUpProfilePicture:
-
                     //pick image from sdcard
+
                     startActivityForResult(new Intent(Intent.ACTION_GET_CONTENT).setType("image/*"), REQUEST_CODE);
                     break;
-                case R.id.btnActivitySignUpSignUp:
-                    //TODO: 1 validate inputs -> 2 create new user -> 3 save profile photo -> 4 add user to database
-                    boolean isFormValid = true;
 
-                    //Log.e("CLICK","Creating ...");
+                case R.id.btnActivitySignUpSignUp:
+                    //1 validate inputs -> 2 create new user -> 3 save profile photo -> 4 add user to database
+                    boolean isFormValid = true;
 
                     //check name
                     if (Util.isTextInvalid(etFullName.getText().toString().trim())) {
@@ -292,19 +314,35 @@ public class SignUp extends AppCompatActivity {
                         break;
                     }
 
-                    // call the function to create user
-//                    createNewUser(new User(etFullName.getText().toString(), etEmailAddress.getText().toString(), etPassword.getText().toString()));
-                    createNewUser(new User(etFullName.getText().toString(), etEmailAddress.getText().toString(), etPassword.getText().toString(), "testURL"));
+                    /**
+                     * determine the ROLE type based on the type of user who's creating this new user
+                     * if the user is anonymous the role for the user being created
+                     * will be STANDARD and CRITIC if the user is created by an ADMIN
+                     */
+                    UserRole role = null;
+                    try {
+                        role = (UserRole) getIntent().getExtras().get("USER_ROLE");
+                    } catch (Exception e) {
+                        e.getMessage();
+                    }
+
+                    // Create user
+                    createNewUser(new User(
+                            etFullName.getText().toString(),
+                            etEmailAddress.getText().toString(),
+                            etPassword.getText().toString(),
+
+                            // if role was not passed it will be standard
+                            (role != null) ? role.name() : UserRole.STANDARD.name()));
 
                     break;
-                case R.id.tvActivitySignUpAlreadyHaveAnAccount:
 
+                case R.id.tvActivitySignUpAlreadyHaveAnAccount:
+                    //go to login page
                     startActivity(new Intent(getApplicationContext(), Login.class));
                     break;
                 default:
             }
         }
-
-
     }
 }
