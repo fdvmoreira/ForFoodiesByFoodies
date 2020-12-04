@@ -12,15 +12,12 @@
         android:layout_height="wrap_content">
 
         <ImageView
-            android:id="@+id/ivCardView"
+            android:id="@+id/ivCardViewPhoto"
             android:layout_width="110dp"
             android:layout_height="110dp"
-            android:layout_marginTop="15dp"
-            android:layout_marginLeft="15dp"
+            android:contentDescription="@string/todo"
             app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            android:layout_marginStart="15dp"
-            android:contentDescription="@string/todo" />
+            app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
             android:id="@+id/tvCardViewRestaurantName"
@@ -31,7 +28,7 @@
             android:textColor="@color/textColorPrimary"
             android:textSize="20sp"
             android:textStyle="bold"
-            app:layout_constraintLeft_toRightOf="@id/ivCardView"
+            app:layout_constraintLeft_toRightOf="@id/ivCardViewPhoto"
             app:layout_constraintTop_toTopOf="parent" />
 
         <RatingBar
@@ -41,7 +38,7 @@
             android:isIndicator="true"
             android:numStars="5"
             app:layout_constraintTop_toBottomOf="@id/tvCardViewRestaurantName"
-            app:layout_constraintLeft_toRightOf="@id/ivCardView"
+            app:layout_constraintLeft_toRightOf="@id/ivCardViewPhoto"
             android:layout_margin="15dp"
             style="@style/Widget.AppCompat.RatingBar.Small"
             android:theme="@style/ratingBar"/>
@@ -59,14 +56,14 @@
             app:layout_constraintBottom_toBottomOf="@id/ratingBarCardView"/>
 
         <TextView
-            android:id="@+id/tvCardViewRestaurantType"
+            android:id="@+id/tvCardViewCuisine"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="16sp"
             android:hint="@string/restaurant_type"
             android:textColor="@color/textColorPrimary"
             android:layout_margin="15dp"
-            app:layout_constraintLeft_toRightOf="@id/ivCardView"
+            app:layout_constraintLeft_toRightOf="@id/ivCardViewPhoto"
             app:layout_constraintTop_toBottomOf="@id/ratingBarCardView"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
