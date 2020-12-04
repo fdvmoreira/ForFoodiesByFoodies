@@ -9,7 +9,6 @@ import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -53,7 +52,6 @@ public class SignUp extends AppCompatActivity {
     //views
     private ImageView ivProfilePicture;
     private EditText etFullName, etEmailAddress, etPassword, etConfirmPassword;
-    private ProgressBar pbProgressbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -81,8 +79,6 @@ public class SignUp extends AppCompatActivity {
         etPassword = findViewById(R.id.etActivitySignUpNewPassword);
         etConfirmPassword = findViewById(R.id.etActivitySignUpConfirmPassword);
 
-        pbProgressbar = findViewById(R.id.pbSignUpActivityProgressbar);
-        pbProgressbar.setVisibility(View.GONE);
 
         //add focus listener
         etConfirmPassword.setOnFocusChangeListener(new View.OnFocusChangeListener() {
@@ -352,8 +348,6 @@ public class SignUp extends AppCompatActivity {
                         e.getMessage();
                     }
 
-                    // show progress bar
-                    pbProgressbar.setVisibility(View.VISIBLE);
 
                     // Create user
                     createNewUser(new User(
@@ -364,8 +358,6 @@ public class SignUp extends AppCompatActivity {
                             // if role was not passed it will be standard
                             (role != null) ? role : UserRole.STANDARD));
 
-                    // hide progressbar
-                    pbProgressbar.setVisibility(View.GONE);
 
                     break;
 
