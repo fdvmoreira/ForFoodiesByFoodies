@@ -132,8 +132,7 @@ public class MainActivity extends AppCompatActivity {
                 }
 
                 // fill the drawer nav header with name and email
-                etNavHeaderName.setText(mCurrentUser.getName() + ""
-                        + (mCurrentUser.getRole().toString().equals(UserRole.ADMIN.toString()) ? "(Admin)" : ""));
+                etNavHeaderName.setText(String.format("%s%s", mCurrentUser.getName(), mCurrentUser.getRole().toString().equals(UserRole.ADMIN.toString()) ? "(Admin)" : ""));
                 etNavHeaderEmailAddress.setText(mCurrentUser.getEmail());
             }
 
@@ -144,8 +143,7 @@ public class MainActivity extends AppCompatActivity {
                 Log.d("DOWNLOAD", "Success ");
 
                 // decode the bytes into profile photo and add it image view
-                byte[] data = bytes;
-                Bitmap photo = BitmapFactory.decodeByteArray(data, 0, bytes.length);
+                Bitmap photo = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
                 ivNavHeaderProfilePhoto.setImageBitmap(photo);
 
             }
