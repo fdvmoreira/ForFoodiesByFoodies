@@ -2,6 +2,7 @@ package com.fdvmlab.forfoodiesbyfoodies;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
@@ -40,7 +41,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        //TODO Check if user is authenticated
+
         mAuth = FirebaseAuth.getInstance();
         mUser = FirebaseAuth.getInstance().getCurrentUser();
 
@@ -77,6 +78,14 @@ public class MainActivity extends AppCompatActivity {
         //Picasso.get().load(mAuth.getCurrentUser().getPhotoUrl()).fit().into(navHPP);
     }
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+        // Fetch the user's details from database
+
+
+    }
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
@@ -95,11 +104,16 @@ public class MainActivity extends AppCompatActivity {
             switch (item.getItemId()) {
 
                 case R.id.menu_item_reviews:
+                    // see users reviews
+                    drawerLayout.closeDrawer(Gravity.LEFT);
+
                     startActivity(new Intent(getApplicationContext(), ReviewsList.class));
                     break;
 
                 case R.id.menu_item_add_new_user:
                     // create new user
+                    drawerLayout.closeDrawer(Gravity.LEFT);
+
                     startActivity(new Intent(getApplicationContext(), SignUp.class)
                             .putExtra("USER_ROLE", UserRole.CRITIC)
                             .putExtra("ADMIN", (Serializable) mCurrentUser));
@@ -107,7 +121,9 @@ public class MainActivity extends AppCompatActivity {
 
                 case R.id.menu_item_logout:
                     // sign up and finish terminate activity
-                    
+
+                    drawerLayout.closeDrawer(Gravity.LEFT);
+
                     if (mUser != null) mAuth.signOut();
                     startActivity(new Intent(getApplicationContext(), Login.class));
                     finish();
