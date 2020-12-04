@@ -12,11 +12,12 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name="com.fdvmlab.forfoodiesbyfoodies.views.UserProfile"></activity>
+        <activity android:name="com.fdvmlab.forfoodiesbyfoodies.views.FoodPlaceList"></activity>
+        <activity android:name="com.fdvmlab.forfoodiesbyfoodies.views.UserProfile" />
         <activity android:name="com.fdvmlab.forfoodiesbyfoodies.views.ForgotPassword" />
         <activity android:name="com.fdvmlab.forfoodiesbyfoodies.views.SignUp" />
-        <activity android:name="com.fdvmlab.forfoodiesbyfoodies.views.Login" />
-        <activity android:name="com.fdvmlab.forfoodiesbyfoodies.MainActivity">
+        <activity android:name="com.fdvmlab.forfoodiesbyfoodies.MainActivity" />
+        <activity android:name="com.fdvmlab.forfoodiesbyfoodies.views.Login">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
