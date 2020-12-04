@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
@@ -23,7 +22,6 @@ public class ForgotPassword extends AppCompatActivity {
 
     //views ref
     private EditText etEmailAddress;
-    private Button btnRecoverPassword;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,8 +35,7 @@ public class ForgotPassword extends AppCompatActivity {
         etEmailAddress = findViewById(R.id.etForgotPasswordEmailAddress);
 
         //add click listener to recover password button
-        btnRecoverPassword = findViewById(R.id.btnForgotPasswordRecoverPassword);
-        btnRecoverPassword.setOnClickListener(new ClickListener());
+        findViewById(R.id.btnForgotPasswordRecoverPassword).setOnClickListener(new ClickListener());
 
     }
 
@@ -68,7 +65,6 @@ public class ForgotPassword extends AppCompatActivity {
                 @Override
                 public void onComplete(@NonNull Task<Void> task) {
                     Log.d("RECOVERY", (task.isSuccessful()) ? "Recover SUCCESS" : " Recover FAIL");
-                    //Snackbar.make(btnRecoverPassword,(task.isSuccessful())?"Email Sent!":"Recovery Failed!",Snackbar.LENGTH_SHORT).show();
                     Toast.makeText(getApplicationContext(), (task.isSuccessful()) ? "Email Sent!" : "Recovery Failed!", Toast.LENGTH_SHORT).show();
                     if (task.isSuccessful())
                         startActivity(new Intent(getApplicationContext(), Login.class));
