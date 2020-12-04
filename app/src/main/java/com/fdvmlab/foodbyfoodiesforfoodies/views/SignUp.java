@@ -33,6 +33,8 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.io.ByteArrayOutputStream;
 
 public class SignUp extends AppCompatActivity {
@@ -108,9 +110,9 @@ public class SignUp extends AppCompatActivity {
     }
 
     /**
-     * @param requestCode
-     * @param resultCode
-     * @param data
+     * @param requestCode the provided req code
+     * @param resultCode  OK if RESULT_OK
+     * @param data        URI retrieved from selecting photo
      */
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
@@ -129,7 +131,7 @@ public class SignUp extends AppCompatActivity {
         }
     }
 
-    private void createNewUser(final User user) {
+    private void createNewUser(@NotNull final User user) {
         // Create new Auth
         mAuth.createUserWithEmailAndPassword(user.getEmail(), user.getPassword())
                 .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
