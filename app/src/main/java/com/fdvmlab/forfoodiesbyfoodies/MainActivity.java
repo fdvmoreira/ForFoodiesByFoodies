@@ -19,6 +19,7 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import com.fdvmlab.foodbyfoodiesforfoodies.R;
 import com.fdvmlab.forfoodiesbyfoodies.models.User;
 import com.fdvmlab.forfoodiesbyfoodies.models.UserRole;
+import com.fdvmlab.forfoodiesbyfoodies.views.FoodPlaceList;
 import com.fdvmlab.forfoodiesbyfoodies.views.Login;
 import com.fdvmlab.forfoodiesbyfoodies.views.SignUp;
 import com.fdvmlab.forfoodiesbyfoodies.views.UserProfile;
@@ -40,6 +41,10 @@ import com.google.firebase.storage.StorageReference;
 import java.io.Serializable;
 
 public class MainActivity extends AppCompatActivity {
+
+    // const type
+    final int RESTAURANT = 1;
+    final int STREET_FOOD_STALL = 2;
 
     // Firebase component
     private FirebaseAuth mAuth = null;
@@ -211,6 +216,22 @@ public class MainActivity extends AppCompatActivity {
                     return false;
             }
             return true;
+        }
+    }
+
+    private class ClickListener implements View.OnClickListener {
+        @Override
+        public void onClick(View v) {
+            switch (v.getId()) {
+                case R.id.cvMainActivityRestaurant:
+                    startActivity(new Intent(getApplicationContext(), FoodPlaceList.class).putExtra("FOOD_PLACE_TYPE", RESTAURANT));
+
+                    break;
+                case R.id.cvMainActivityStreetFoodStall:
+                    startActivity(new Intent(getApplicationContext(), FoodPlaceList.class).putExtra("FOOD_PLACE_TYPE", STREET_FOOD_STALL));
+                    break;
+                default:
+            }
         }
     }
 }
