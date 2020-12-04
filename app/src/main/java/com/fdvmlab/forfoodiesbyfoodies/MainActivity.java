@@ -22,18 +22,27 @@ import com.fdvmlab.forfoodiesbyfoodies.views.SignUp;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 import java.io.Serializable;
 
 public class MainActivity extends AppCompatActivity {
 
-    //Auth
-    FirebaseAuth mAuth = null;
-    FirebaseUser mUser = null;
-    //Drawer toggle
-    ActionBarDrawerToggle drawerToggle = null;
-    DrawerLayout drawerLayout = null;
-    //Current user
+    // Firebase component
+    private FirebaseAuth mAuth = null;
+    private FirebaseUser mUser = null;
+
+    private DatabaseReference databaseReference;
+    private StorageReference storageReference;
+
+    // Drawer toggle
+    private ActionBarDrawerToggle drawerToggle = null;
+    private DrawerLayout drawerLayout = null;
+
+    // Current user
     private User mCurrentUser = new User("Nan", "manil@mail.com", "123456", UserRole.ADMIN);
 
     @Override
@@ -41,10 +50,11 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-
+        //Firebase components
         mAuth = FirebaseAuth.getInstance();
         mUser = FirebaseAuth.getInstance().getCurrentUser();
-
+        databaseReference = FirebaseDatabase.getInstance().getReference("users");
+        storageReference = FirebaseStorage.getInstance().getReference("profile_pictures");
 
         //init drawer layout
         drawerLayout = findViewById(R.id.drawerLayout);
@@ -83,8 +93,8 @@ public class MainActivity extends AppCompatActivity {
         super.onStart();
 
         // Fetch the user's details from database
-
-
+//        databaseReference
+//        storageReference
     }
 
     @Override
@@ -101,6 +111,8 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+
+
             switch (item.getItemId()) {
 
                 case R.id.menu_item_reviews:
@@ -111,6 +123,12 @@ public class MainActivity extends AppCompatActivity {
                     break;
 
                 case R.id.menu_item_add_new_user:
+
+                    // deactivate action for non admin user
+                    if (mCurrentUser.getRole() != UserRole.ADMIN) {
+                        break;
+                    }
+
                     // create new user
                     drawerLayout.closeDrawer(Gravity.LEFT);
 
