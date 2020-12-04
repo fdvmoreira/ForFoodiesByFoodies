@@ -1,4 +1,4 @@
-package com.fdvmlab.foodbyfoodiesforfoodies.views;
+package com.fdvmlab.forfoodiesbyfoodies.views;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -12,7 +12,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.fdvmlab.foodbyfoodiesforfoodies.R;
-import com.fdvmlab.foodbyfoodiesforfoodies.Util;
+import com.fdvmlab.forfoodiesbyfoodies.Util;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;

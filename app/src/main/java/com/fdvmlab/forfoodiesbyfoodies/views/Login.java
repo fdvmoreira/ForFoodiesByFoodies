@@ -1,4 +1,4 @@
-package com.fdvmlab.foodbyfoodiesforfoodies.views;
+package com.fdvmlab.forfoodiesbyfoodies.views;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -12,8 +12,9 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.fdvmlab.foodbyfoodiesforfoodies.MainActivity;
+import com.fdvmlab.forfoodiesbyfoodies.MainActivity;
 import com.fdvmlab.foodbyfoodiesforfoodies.R;
+import com.fdvmlab.forfoodiesbyfoodies.models.UserRole;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -114,23 +115,29 @@ public class Login extends AppCompatActivity {
                     Log.d("Login#ClickListener: ", " Forgot password clicked");
                     intent = new Intent(getApplicationContext(), ForgotPassword.class);
                     break;
+
                 case R.id.btnActivityLoginSignIn:
                     Log.d("Login#ClickListener: ", "Sign In button clicked");
                     //validate inputs and sign in
                     if (validateInputFields()) {
 
                         signin(etEmailAddress.getText().toString(), etPassword.getText().toString());
-                        //TODO open main activity
                         if (mUser != null) {
                             intent = new Intent(getApplicationContext(), MainActivity.class);
                             intent.putExtra("uuid", mUser.getUid());
+
+                            // terminate this activity
+                            finish();
                         }
                     }
                     break;
+
                 case R.id.tvActivityLoginDoNotHaveAnAccount:
                     Log.d("Login#ClickListener: ", " Do not have an account");
-                    intent = new Intent(getApplicationContext(), SignUp.class);
+                    // Go sign Up first
+                    intent = new Intent(getApplicationContext(), SignUp.class).putExtra("USER_ROLE", UserRole.STANDARD);
                     break;
+
                 default:
             }
             // go to next activity
